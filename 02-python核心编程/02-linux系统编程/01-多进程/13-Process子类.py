@@ -1,11 +1,14 @@
-from multiprocess improt Process
+from multiprocessing import Process
+import time
 
-def test():
-	pass
+class Process_class(Process):
+	# def __init__(self):
+	# 	pass
 
-p = Process(target=test)
+	def run(self):
+		print("--1--")
+		time.sleep(1)
+
+p = Process_class()
 p.start()
-
 p.join()
-p.terminate()
-
