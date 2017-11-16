@@ -6,8 +6,10 @@ class Process_class(Process):
 	# 	pass
 
 	def run(self):
-		print("--1--")
-		time.sleep(1)
+#while True:
+		for i in range(5):
+			print("--1--")
+			time.sleep(1)
 
 p = Process_class()
 p.start()

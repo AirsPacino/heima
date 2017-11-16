@@ -7,9 +7,9 @@ def test():
 		time.sleep(1)
 
 # 有问题
-if __name__ == "__main__":
-	p = Process(target=test)
-	p.start()
+#if __name__ == "__main__":
+p = Process(target=test)
+p.start()
 
 while True:
 	print("hh main")
