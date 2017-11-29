@@ -26,6 +26,7 @@ if __name__ == "__main__":
     po = Pool()
 
     """这是阻塞方式，一个进程执行完才会调用下一个进程"""
+    """下面的就是请求..."""
     po.apply(writer, (q,))
     po.apply(reader, (q,))
 
