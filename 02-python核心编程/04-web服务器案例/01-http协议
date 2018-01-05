@@ -1,0 +1,21 @@
+URL:
+    GET:没有请求体，所以传参在url中传--> http://www.test.com/s?arg1=value&arg2=value2&arg3=value3
+    POST
+    PUT
+    ACCEPT
+    DELETE
+    ..
+URI:
+URN: 未来发展方向
+
+GET /s?ie=utf-8&f=3&rsv_bp=1&rsv_idx=2&tn=99006304_1_oem_dg&wd=%E6%B7%98%E5%AE%9D%E7%BD%91&rsv_spt=1&oq=url%2520%253F%25E5%2590%258E%25E9%259D%25A2%25E5%258A%25A0%25E5%258F%2582%25E6%2595%25B0&rsv_pq=d1ea5b0900001b4e&rsv_t=212a6djLpAjBNosxwhcqaugwyaahjNayVr7lRKn5%2Bx9mayK%2BZfbcbqPc2Z%2BQvpPVRNO7v3if9gM&rqlang=cn&rsv_enter=0&rsv_sug3=9&rsv_sug1=8&rsv_sug7=100&rsv_sug2=0&prefixsug=taobao&rsp=0&rsv_sug4=1872&bs=url%20%3F%E5%90%8E%E9%9D%A2%E5%8A%A0%E5%8F%82%E6%95%B0&rsv_jmp=fail HTTP/1.1
+Host: www.baidu.com
+Connection: keep-alive
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+Referer: https://www.baidu.com/s?ie=utf-8&f=3&rsv_bp=1&rsv_idx=2&tn=99006304_1_oem_dg&wd=%E6%B7%98%E5%AE%9D%E7%BD%91&rsv_spt=1&oq=url%2520%253F%25E5%2590%258E%25E9%259D%25A2%25E5%258A%25A0%25E5%258F%2582%25E6%2595%25B0&rsv_pq=d1ea5b0900001b4e&rsv_t=212a6djLpAjBNosxwhcqaugwyaahjNayVr7lRKn5%2Bx9mayK%2BZfbcbqPc2Z%2BQvpPVRNO7v3if9gM&rqlang=cn&rsv_enter=0&rsv_sug3=9&rsv_sug1=8&rsv_sug7=100&rsv_sug2=0&prefixsug=taobao&rsp=0&rsv_sug4=1872
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9
+Cookie: BIDUPSID=59371FEA1EE9462278A99C87C2743C3B; PSTM=1500021103; __cfduid=d9cc1ae42bd859f47288f1b48a8a05a1a1501723330; BAIDUID=FF853C5557AD00BD7B158A8012B05F33:FG=1; BDUSS=FJ2emlPUC03bm9sY3JrRlYwM0J6b0RlUHpkSzUzcW1TQmlJanpGaXo3Zng1MFphQVFBQUFBJCQAAAAAAAAAAAEAAABs9dgfZzU1MjA3OTc2NgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPFaH1rxWh9aa; MCITY=-131%3A; cflag=5%3A3; BD_HOME=1; rsv_jmp_slow=1515072492974; BDRCVFR[i-rd_-eQEYn]=mk3SLVN4HKm; BD_CK_SAM=1; PSINO=1; H_PS_PSSID=; BD_UPN=12314753; sug=3; sugstore=0; ORIGIN=2; bdime=0; H_PS_645EC=c6afIJYeQqw2ihfM5e8RDDauY1ZwrFG4hjeYjCXKUCs6NhgmqKQMtlJR60AN6cfhrhzcgSktJC8
