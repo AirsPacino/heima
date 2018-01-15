@@ -20,8 +20,8 @@ def load_page(url):
     #link_list = xml_data.xpath('//div[@class="wrappic"]//img/@src')
     link_list = xml_data.xpath('//img[@class="BDE_Image"]/@src')
     print("link_list: " + str(link_list))
-    for item in link_list:
-        save_image(item)
+    # for item in link_list:
+    #     save_image(item)
 
 
 def save_image(link):
