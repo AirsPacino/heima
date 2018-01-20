@@ -3,7 +3,7 @@
 import urllib
 import urllib2
 from lxml import etree
-
+from bs4 import BeautifulSoup as bsoup
 
 def load_page(url):
     """
@@ -15,6 +15,8 @@ def load_page(url):
 
     request = urllib2.Request(url, headers=ag_header)
     html = urllib2.urlopen(request).read()
+    test = bsoup(html)
+    print(test.prettify())
 
     xml_data = etree.HTML(html)
     #link_list = xml_data.xpath('//div[@class="wrappic"]//img/@src')

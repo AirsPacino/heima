@@ -17,13 +17,15 @@ def load_page(url):
     得到每个帖子的url地址
     :return:
     """
+    print(url)
     print("正在获取此页帖子url信息" + '=' * 30)
-    ag_head = {"User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36"}
-    request = urllib2.Request(url, headers=ag_head)
+    #ag_head = {"User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36"}
+    request = urllib2.Request(url)
     e_html = urllib2.urlopen(request).read()
     xml_content = etree.HTML(e_html)
 
-    relative_path = xml_content.xpath("""//div[@class="t_con cleafix"]/div/div/div/a/@href""")
+    relative_path = xml_content.xpath('//div[@class="t_con cleafix"]/div/div/div/a/@href')
+    print(relative_path)
     for i in relative_path:
         tiezi_url = "http://tieba.baidu.com" + i
         load_image(tiezi_url)
@@ -75,7 +77,6 @@ def sexy_spider(tieba, start_page, end_page):
     for page in range(start_page, end_page + 1):
         pn = (page - 1) * 50
         url = root_url + kw + "&pn=" + str(pn)
-        print(url)
         load_page(url)
 
 
