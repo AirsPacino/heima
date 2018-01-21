@@ -6,46 +6,10 @@
 # 文章的标题: //h1
 # 文章的内容：////div[@class="entry-inner"]
 
-import urllib
-import urllib2
-import Queue
+import queue
 import threading
 import requests
 from lxml import etree
-
-
-class Spider(object):
-
-    def __init__(self, url, ag_header):
-        self.url = url
-        self.head = ag_header
-
-    def load_page(self):
-        print("[*]获取页面中每个版块的url中...")
-        request = urllib2.Request(self.url, headers=self.head)
-        html = urllib2.urlopen(request).read().decode("utf-8")
-        path_list = etree.HTML(html).xpath('//h2//a/@href')
-        for section_url in path_list:
-            # self.load_image(section_url)
-            print(section_url)
-
-    def load_image(self, section_url):
-        print("[*]正在获取文章数据中...")
-        request = urllib2.Request(section_url, headers=self.head)
-        html = urllib2.urlopen(request).read().decode("utf-8")
-        file_name = etree.HTML(html).xpath('//h1/text()')
-        content_txt = etree.HTML(html).xpath('//div[@class="entry-inner"]//p/text()')
-        for title in file_name:
-            print("[*]正在保存文章<%s>..." % title.encode("utf-8"))
-            for each_txt in content_txt:
-                self.save_text(title, each_txt.encode("utf-8"))
-
-    def save_text(self, title, each_txt):
-        # print("[*]正在保存文章...")
-        file_name = title + ".txt"
-        with open(file_name, "ab") as f:
-            f.write(each_txt + "\r\n")
-        # print("[*]保存文章%s完成！！！" % file_name.encode("utf-8"))
 
 
 class CrawThread(threading.Thread):
@@ -57,13 +21,14 @@ class CrawThread(threading.Thread):
 
     def run(self):
         print("启动%s" % self.name)
-        try:
-            page = self.page_queue.get(False)
-            full_url = "https://9song.me/cy/%e6%a0%a1%e5%9c%92%e5%ad%b8%e7%94%9f/page/" + str(page)
-            html = requests.get(full_url, self.headers).text
-            self.each_page_queue.put(html)
-        except:
-            pass
+        while not CRAW_EXIT:
+            try:
+                page = self.page_queue.get(False)
+                full_url = "https://9song.me/cy/%e6%a0%a1%e5%9c%92%e5%ad%b8%e7%94%9f/page/" + str(page)
+                html = requests.get(full_url, self.headers).text
+                self.each_page_queue.put(html)
+            except:
+                pass
         print("结束%s" % self.name)
 
 
@@ -75,45 +40,53 @@ class ParseThread(threading.Thread):
 
     def run(self):
         print("启动%s" % self.name)
-        """这里的html是每一篇文章的页面的html源码"""
-        html = self.data_queue.get()
-        self.handle(html)
+        while not PARSE_EXIT:
+            try:
+                """这里的html是每一篇文章的页面的html源码"""
+                html = self.data_queue.get(False)
+                self.handle(html)
+            except:
+                pass
+        print("结束%s" % self.name)
 
     def handle(self, html):
-        file_name = etree.HTML(html).xpath('//h1/text()')
+        title_list = etree.HTML(html).xpath('//h1/text()')
         content_txt = etree.HTML(html).xpath('//div[@class="entry-inner"]//p/text()')
-        for title in file_name:
-            print("[*]正在保存文章<%s>..." % title.encode("utf-8"))
+        for title in title_list:
+            print("[*]正在保存文章<%s>..." % title)
             for each_txt in content_txt:
-                self.save_text(title, each_txt.encode("utf-8"))
-
-    def save_text(self, title, each_txt):
-        file_name = title + ".txt"
-        with open(file_name, "ab") as f:
-            f.write(each_txt + "\r\n")
-        print("[*]保存文章%s完成！！！" % file_name.encode("utf-8"))
+                file_name = title + ".txt"
+                """with有两个必须执行的操作:__enter__()和__exit__()
+                不管里面内容如何，都会执行打开关闭
+                获取锁，处理内容，释放锁"""
+                #with self.lock:
+                with open(file_name, "a") as f:
+                    f.write(each_txt + "\n")
+            print("[*]保存文章%s完成！！！" % file_name)
 
 
 class CrawEachThread(threading.Thread):
     def __init__(self, thread_name, each_page_queue, data_queue, header):
-        super(CrawEachThread, self).__init__(thread_name)
+        super(CrawEachThread, self).__init__(name=thread_name)
         self.each_page_queue = each_page_queue
         self.data_queue = data_queue
         self.header = header
 
     def run(self):
         print("启动%s" % self.name)
-        try:
-            html = self.each_page_queue.get(False)
-            self.handle(html)
-        except:
-            pass
+        while not EACH_PAGE_EXIT:
+            try:
+                html = self.each_page_queue.get(False)
+                self.handle(html)
+            except:
+                pass
         print("结束%s" % self.name)
 
     def handle(self, html):
         path_list = etree.HTML(html).xpath('//h2//a/@href')
         for section_url in path_list:
-            each_html = requests.get(section_url)
+            print("=======================%s正在获取每个板块的url" %self.name)
+            each_html = requests.get(section_url).text
             self.data_queue.put(each_html)
 
 
@@ -135,13 +108,18 @@ if __name__ == '__main__':
     mylock = threading.Lock()
 
     """所需队列"""
-    page_queue = Queue.Queue()
-    data_queue = Queue.Queue()
-    each_page_queue = Queue.Queue()
+    page_queue = queue.Queue()
+    data_queue = queue.Queue()
+    each_page_queue = queue.Queue()
+
+    """控制线程执行函数退出的全局变量"""
+    CRAW_EXIT = False
+    EACH_PAGE_EXIT = False
+    PARSE_EXIT = False
 
     """用户输入请求的指定页面"""
-    start_page = int(raw_input("起始页："))
-    end_page = int(raw_input("结束页："))
+    start_page = int(input("起始页："))
+    end_page = int(input("结束页："))
 
     """先put需要爬取的页数"""
     for page in range(start_page, end_page + 1):
@@ -156,6 +134,12 @@ if __name__ == '__main__':
         thread.start()
         craw_thread.append(thread)
 
+    """页面队列为空，采集线程退出循环"""
+    while not page_queue.empty():
+        pass
+    CRAW_EXIT = True
+    print("page_queue为空！")
+
     """获取每一页的url"""
     craw_each_page = ["each-1", "each-2", "each-3"]
     craw_each_thread = []
@@ -164,6 +148,15 @@ if __name__ == '__main__':
         thread = CrawEachThread(thread_name, each_page_queue, data_queue, ag_header)
         thread.start()
         craw_each_thread.append(thread)
+
+    for t1 in craw_thread:
+        t1.join()
+
+    while not each_page_queue.empty():
+        #print(each_page_queue.empty())
+        pass
+    EACH_PAGE_EXIT = True
+    print("each_page_queue为空！")
 
     """启动解析线程..."""
     parse_list = ["parse-1", "parse-2", "parse-3"]
@@ -175,6 +168,14 @@ if __name__ == '__main__':
         thread.start()
         parse_thread.append(thread)
 
-        # print("[*]正在爬取此分类下第%d页..." % page)
-        # sexy = Spider(full_url, ag_header)
-        # sexy.load_page()
+    for t2 in craw_each_thread:
+        t2.join()
+
+    while not data_queue.empty():
+        pass
+    PARSE_EXIT = True
+    print("data_queue为空！")
+
+    for t3 in parse_thread:
+        t3.join()
+
